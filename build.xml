@@ -1,15 +1,11 @@
-<project>
+<project default="compile">
   <target name="clean">
 	<delete dir="build"/>
   </target>
 
   <target name="compile">
-	<mkdir dir="build/classes"/>
-	<javac srcdir="./" destdir="build/classes"/>
-  </target>
-
-  <target name="run">
-	<java classpath="build/classes/" classname="WebServer" fork="true"/>
+	  <mkdir dir="./"/>
+	  <javac srcdir="./" destdir="./"/>
   </target>
 
 </project>
