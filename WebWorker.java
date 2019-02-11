@@ -80,6 +80,7 @@ public class WebWorker implements Runnable
 		System.err.println("Request line: ("+line+")");
 		if (line.length()==0) break;
 
+		// collect the filepath
 		if(line.contains("GET"))
 		  filename = line.substring(4,line.indexOf(' ',4));
 
@@ -116,7 +117,7 @@ public class WebWorker implements Runnable
   }
 
   /**
-   * Write the HTTP header lines to the client network connection.
+   * Write the 404 message.
    * @param os is the OutputStream object to write to
    * @param contentType is the string MIME content type (e.g. "text/html")
    **/
@@ -149,6 +150,8 @@ public class WebWorker implements Runnable
    **/
   private void writeContent(OutputStream os) throws Exception
   {
+  
+    // Default - no filepath
 	if(filename.equals("/"))
 	{
 	  writeHTTPHeader(os,"text/html");
@@ -161,6 +164,8 @@ public class WebWorker implements Runnable
 	  String asset = System.getProperty("user.dir") + filename;
 
 	  try{
+	  
+	    // if filepath does not exist throw exception
 		Scanner inputScanner = new Scanner( new File(asset) );
 		writeHTTPHeader(os,"text/html");
 
