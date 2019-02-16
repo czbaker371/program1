@@ -150,44 +150,69 @@ public class WebWorker implements Runnable
    **/
   private void writeContent(OutputStream os) throws Exception
   {
-  
-    // Default - no filepath
-	if(filename.equals("/"))
-	{
-	  writeHTTPHeader(os,"text/html");
-	  os.write("<html><head></head><body>\n".getBytes());
-	  os.write("<h3>My web server works!</h3>\n".getBytes());
-	  os.write("</body></html>\n".getBytes());
-	}
-	else
-	{
-	  String asset = System.getProperty("user.dir") + filename;
+    String types[] ={"png","gif","jpeg","jpg","ico"};
 
-	  try{
-	  
-	    // if filepath does not exist throw exception
-		Scanner inputScanner = new Scanner( new File(asset) );
-		writeHTTPHeader(os,"text/html");
+    for(int i = 0 ;i < types.length;i++)
+    {
+      if(filename.toLowerCase().contains(types[i]))
+      {
+	String asset = System.getProperty("user.dir") + filename;
 
-		Date d = new Date();
-		DateFormat df = DateFormat.getDateTimeInstance();
-		df.setTimeZone(TimeZone.getTimeZone("GMT"));
+	try{
+	  // if filepath does not exist throw exception
 
-		String currentDate = df.format(d);
-		String serverName = "cyrusServer";
+	  InputStream inputStream = new FileInputStream(new File(asset));
 
-		while(inputScanner.hasNextLine())
-		{
-		  String line = inputScanner.nextLine();
-		  line = line.replaceAll("<cs371server>",serverName);
-		  line = line.replaceAll("<cs371date>",currentDate);
+	  int byteRead;
+	  writeHTTPHeader(os,"image/"+types[i]);
 
-		  os.write(line.getBytes());
-		}
-	  } catch (Exception e) {
-		write404Header(os,"text/html");
+	  while ((byteRead = inputStream.read()) != -1) {
+	    os.write(byteRead);
 	  }
+
+	} catch (Exception e) {
+	  write404Header(os,"text/html");
 	}
+      }
+
+    }
+    // Default - no filepath
+    if(filename.equals("/"))
+    {
+      writeHTTPHeader(os,"text/html");
+      os.write("<html><head></head><body>\n".getBytes());
+      os.write("<h3>My web server works!</h3>\n".getBytes());
+      os.write("</body></html>\n".getBytes());
+    }
+    else
+    {
+      String asset = System.getProperty("user.dir") + filename;
+
+      try{
+
+	// if filepath does not exist throw exception
+	Scanner inputScanner = new Scanner( new File(asset) );
+	writeHTTPHeader(os,"text/html");
+
+	Date d = new Date();
+	DateFormat df = DateFormat.getDateTimeInstance();
+	df.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+	String currentDate = df.format(d);
+	String serverName = "cyrusServer";
+
+	while(inputScanner.hasNextLine())
+	{
+	  String line = inputScanner.nextLine();
+	  line = line.replaceAll("<cs371server>",serverName);
+	  line = line.replaceAll("<cs371date>",currentDate);
+
+	  os.write(line.getBytes());
+	}
+      } catch (Exception e) {
+	write404Header(os,"text/html");
+      }
+    }
   }
 
-} // end class
+  } // end class
